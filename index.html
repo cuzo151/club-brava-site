@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Club Brava | Puerto Rico's Premier Nightclub</title>
+  <meta name="description" content="Step into the heart of Puerto Rico's nightlife at Club Brava in El San Juan Hotel. Immerse yourself in a world of after-hours excitement.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+</head>
+<body class="loading">
+
+  <!-- Nav -->
+  <nav class="navbar" data-anim="nav-drop">
+    <a href="index.html" class="nav-brand" style="text-decoration:none;" aria-label="Club Brava">
+      <svg viewBox="0 0 120 40" width="100" height="30" xmlns="http://www.w3.org/2000/svg" class="brava-logo-svg">
+        <g stroke="var(--color-gold)" stroke-width="5" stroke-linecap="butt">
+          <line x1="10" y1="5" x2="25" y2="35" />
+          <line x1="35" y1="5" x2="50" y2="35" />
+          <line x1="60" y1="5" x2="75" y2="35" />
+          <line x1="68" y1="5" x2="83" y2="35" />
+          <line x1="93" y1="5" x2="108" y2="35" />
+        </g>
+      </svg>
+    </a>
+    <div class="nav-links">
+      <a href="#events">Events</a>
+      <a href="vip-booking.html">VIP Experience</a>
+      <a href="packages.html">Packages</a>
+      <a href="bottle-menu.html">Bottle Menu</a>
+      <a href="private-events.html" class="nav-cta">Private Events</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="hero">
+    <div class="video-cluster">
+      <video src="assets/Brava-Videos/C_GhejwRACv.mp4" autoplay muted loop playsinline></video>
+      <video src="assets/Brava-Videos/CdPmS8Kg3ml.mp4" autoplay muted loop playsinline></video>
+      <video src="assets/Brava-Videos/CtDEz6zgosq.mp4" autoplay muted loop playsinline></video>
+      <video src="assets/Brava-Videos/DIR-RAWSYvT.mp4" autoplay muted loop playsinline></video>
+      <video src="assets/Brava-Videos/DWSVfHGjeKs.mp4" autoplay muted loop playsinline></video>
+    </div>
+    
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <span class="eyebrow" data-anim="fade-up">El San Juan Hotel, Puerto Rico</span>
+      <h1 class="hero-title" data-anim="stagger-up">
+        <span>The Pulse</span>
+        <span>Of The Night</span>
+      </h1>
+      <p class="hero-tagline" data-anim="fade-up" data-delay="0.4">BRAVA IS BRAVA. Discover the ultimate luxury nightlife experience where you see and get seen.</p>
+      <a href="#vip" class="primary-button" data-anim="fade-up" data-delay="0.6">Reserve VIP</a>
+    </div>
+  </section>
+
+  <!-- Flashing Marquee Carousel -->
+  <section class="flash-marquee">
+    <div class="marquee-track track-left">
+      <!-- 10 Unique Images -->
+      <img src="assets/Brava-Photos/C7jsiy6tX7A_0.jpeg" alt="Club Brava Event 1">
+      <img src="assets/Brava-Photos/Ccqgmptr5GX_0.jpeg" alt="Club Brava Event 2">
+      <img src="assets/Brava-Photos/CiSTtgYOqVW.jpeg" alt="Club Brava Event 3">
+      <img src="assets/Brava-Photos/DKgJG3HMq9I.jpeg" alt="Club Brava Event 4">
+      <img src="assets/Brava-Photos/DV9umXNiKDp.webp" alt="Club Brava Event 5">
+      <img src="assets/Brava-Photos/DTTvNiqjoEk.jpeg" alt="Club Brava Event 6">
+      <img src="assets/Brava-Photos/DVJSlqBgkMz.jpeg" alt="Club Brava Event 7">
+      <img src="assets/Brava-Photos/DVwCJvdDh6i_1.jpeg" alt="Club Brava Event 8">
+      <img src="assets/Brava-Photos/DWMUfWUlo5L_1.jpeg" alt="Club Brava Event 9">
+      <img src="assets/Brava-Photos/DWbnhZGjqDe_0.jpeg" alt="Club Brava Event 10">
+      
+      <!-- Exact Duplicates for seamless CSS Loop -->
+      <img src="assets/Brava-Photos/C7jsiy6tX7A_0.jpeg" alt="Club Brava Event 1">
+      <img src="assets/Brava-Photos/Ccqgmptr5GX_0.jpeg" alt="Club Brava Event 2">
+      <img src="assets/Brava-Photos/CiSTtgYOqVW.jpeg" alt="Club Brava Event 3">
+      <img src="assets/Brava-Photos/DKgJG3HMq9I.jpeg" alt="Club Brava Event 4">
+      <img src="assets/Brava-Photos/DV9umXNiKDp.webp" alt="Club Brava Event 5">
+      <img src="assets/Brava-Photos/DTTvNiqjoEk.jpeg" alt="Club Brava Event 6">
+      <img src="assets/Brava-Photos/DVJSlqBgkMz.jpeg" alt="Club Brava Event 7">
+      <img src="assets/Brava-Photos/DVwCJvdDh6i_1.jpeg" alt="Club Brava Event 8">
+      <img src="assets/Brava-Photos/DWMUfWUlo5L_1.jpeg" alt="Club Brava Event 9">
+      <img src="assets/Brava-Photos/DWbnhZGjqDe_0.jpeg" alt="Club Brava Event 10">
+    </div>
+    <div class="marquee-track track-right" style="margin-top: 2rem;">
+      <!-- 10 Unique Images (Reversed Order for Variety) -->
+      <img src="assets/Brava-Photos/DWbnhZGjqDe_0.jpeg" alt="Club Brava Event 10">
+      <img src="assets/Brava-Photos/DWMUfWUlo5L_1.jpeg" alt="Club Brava Event 9">
+      <img src="assets/Brava-Photos/DVwCJvdDh6i_1.jpeg" alt="Club Brava Event 8">
+      <img src="assets/Brava-Photos/DVJSlqBgkMz.jpeg" alt="Club Brava Event 7">
+      <img src="assets/Brava-Photos/DTTvNiqjoEk.jpeg" alt="Club Brava Event 6">
+      <img src="assets/Brava-Photos/DV9umXNiKDp.webp" alt="Club Brava Event 5">
+      <img src="assets/Brava-Photos/DKgJG3HMq9I.jpeg" alt="Club Brava Event 4">
+      <img src="assets/Brava-Photos/CiSTtgYOqVW.jpeg" alt="Club Brava Event 3">
+      <img src="assets/Brava-Photos/Ccqgmptr5GX_0.jpeg" alt="Club Brava Event 2">
+      <img src="assets/Brava-Photos/C7jsiy6tX7A_0.jpeg" alt="Club Brava Event 1">
+      
+      <!-- Exact Duplicates for seamless CSS Loop -->
+      <img src="assets/Brava-Photos/DWbnhZGjqDe_0.jpeg" alt="Club Brava Event 10">
+      <img src="assets/Brava-Photos/DWMUfWUlo5L_1.jpeg" alt="Club Brava Event 9">
+      <img src="assets/Brava-Photos/DVwCJvdDh6i_1.jpeg" alt="Club Brava Event 8">
+      <img src="assets/Brava-Photos/DVJSlqBgkMz.jpeg" alt="Club Brava Event 7">
+      <img src="assets/Brava-Photos/DTTvNiqjoEk.jpeg" alt="Club Brava Event 6">
+      <img src="assets/Brava-Photos/DV9umXNiKDp.webp" alt="Club Brava Event 5">
+      <img src="assets/Brava-Photos/DKgJG3HMq9I.jpeg" alt="Club Brava Event 4">
+      <img src="assets/Brava-Photos/CiSTtgYOqVW.jpeg" alt="Club Brava Event 3">
+      <img src="assets/Brava-Photos/Ccqgmptr5GX_0.jpeg" alt="Club Brava Event 2">
+      <img src="assets/Brava-Photos/C7jsiy6tX7A_0.jpeg" alt="Club Brava Event 1">
+    </div>
+  </section>
+
+  <!-- About / Vibe -->
+  <section class="about" id="events">
+    <div class="about-container">
+      <div class="about-text" data-anim="fade-up">
+        <h2 class="serif-title">Where the Elite Come to Play.</h2>
+        <p>The place where you gather with the ones you know and come together with the ones you crave to meet. Brava is home ... a shared experience that unites us.</p>
+        <p>Open format music Thursdays through Saturdays. Fridays feature open-format sets with our Ultra Lounge transforming into a house and techno vibe. Saturdays, our resident DJs deliver Latin Billboard hits, reggaetón, and hip-hop.</p>
+      </div>
+      <div class="about-image" data-anim="fade-up" data-delay="0.2">
+         <img src="assets/brava_events.png" alt="Club Brava Events">
+      </div>
+    </div>
+  </section>
+
+  <!-- VIP Section -->
+  <section class="vip" id="vip">
+    <div class="vip-bg-glow"></div>
+    <div class="vip-container">
+      <div class="vip-image" data-anim="fade-up">
+        <img src="assets/brava_vip.png" alt="VIP Bottle Service">
+      </div>
+      <div class="vip-content" data-anim="fade-up" data-delay="0.2">
+        <span class="eyebrow gold">Exclusive Services</span>
+        <h2 class="serif-title">Elevate Your Reality.</h2>
+        <p>Reserve your VIP table for the night. Enjoy world-class DJs, live music, and luxurious VIP services with our premium bottle menus. Perfect for celebrations or a memorable night out.</p>
+        <a href="https://www.clubbrava.com/vip" target="_blank" class="primary-button gold-button">View Bottle Menu</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Info Grids -->
+  <section class="info" id="info">
+    <div class="info-grid">
+      <div class="info-card" data-anim="fade-up" data-delay="0.1">
+        <h3>Hours</h3>
+        <p>Thu | 10:00 PM - 5:00 AM</p>
+        <p>Fri-Sat | 11:00 PM - 5:00 AM</p>
+      </div>
+      <div class="info-card" data-anim="fade-up" data-delay="0.2">
+        <h3>Dress Code</h3>
+        <p>Dress to impress. No flip flops, shorts, tank tops, hoodies, sweatpants, or jerseys permitted.</p>
+      </div>
+      <div class="info-card" data-anim="fade-up" data-delay="0.3">
+        <h3>Admission</h3>
+        <p>$20 Regular Admission.</p>
+        <p>Complementary admission for Fairmont El San Juan Hotel Guests.</p>
+      </div>
+      <div class="info-card" data-anim="fade-up" data-delay="0.4">
+        <h3>Age Restriction</h3>
+        <p>Thursday 18+ | Friday & Saturday 21+</p>
+        <p>ID Required for Admission.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-brand">
+        <h3>CLUB BRAVA</h3>
+        <p>Fairmont El San Juan Hotel, Puerto Rico</p>
+      </div>
+      <div class="footer-legal">
+        <p>Email: info@clubbrava.com | Phone: 787 674 8000</p>
+        <p>&copy; 2026 Club Brava. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Image Modal -->
+  <div id="image-modal" class="image-modal">
+    <div class="modal-close">&times;</div>
+    <img id="modal-img" src="" alt="Zoomed Image">
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

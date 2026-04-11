@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Private Events | Club Brava</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="loading">
+
+  <nav class="navbar" style="background: rgba(0,0,0,0.9);">
+    <a href="index.html" class="nav-brand" style="text-decoration:none;" aria-label="Club Brava">
+      <svg viewBox="0 0 120 40" width="100" height="30" xmlns="http://www.w3.org/2000/svg" class="brava-logo-svg">
+        <g stroke="var(--color-gold)" stroke-width="5" stroke-linecap="butt">
+          <line x1="10" y1="5" x2="25" y2="35" />
+          <line x1="35" y1="5" x2="50" y2="35" />
+          <line x1="60" y1="5" x2="75" y2="35" />
+          <line x1="68" y1="5" x2="83" y2="35" />
+          <line x1="93" y1="5" x2="108" y2="35" />
+        </g>
+      </svg>
+    </a>
+    <div class="nav-links">
+      <a href="index.html#events">Events</a>
+      <a href="vip-booking.html">VIP Experience</a>
+      <a href="packages.html">Packages</a>
+      <a href="bottle-menu.html">Bottle Menu</a>
+      <a href="private-events.html" class="nav-cta">Private Events</a>
+    </div>
+  </nav>
+
+  <section class="hero" style="height: 50vh; min-height: 400px;">
+    <div class="hero-bg-wrapper">
+      <img src="assets/brava_events.png" alt="Private Events View" class="hero-bg" style="filter: brightness(0.4);">
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <span class="eyebrow" data-anim="fade-up">Book The Entire Club</span>
+      <h1 class="serif-title" data-anim="fade-up" style="font-size: clamp(2.5rem, 6vw, 4rem); margin-bottom: 1rem;">Private Events</h1>
+      <p data-anim="fade-up" style="color: var(--text-muted); max-width: 600px; margin: 0 auto;">Looking for the perfect venue? Complete the form below to request a full buyout of the club for fundraisers, birthday parties, or exclusive corporate gatherings.</p>
+    </div>
+  </section>
+
+  <section class="page-content">
+    <div class="form-container" data-anim="fade-up">
+      <form action="#" method="POST">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" required placeholder="Enter your name">
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" required placeholder="you@example.com">
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" required placeholder="(xxx) xxx-xxxx">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+          <div class="form-group">
+            <label for="date">Requested Date</label>
+            <input type="date" id="date" name="date" required>
+          </div>
+          <div class="form-group">
+            <label for="guests">Estimated Guest Count</label>
+            <input type="number" id="guests" name="guests" required placeholder="E.g., 100">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="eventType">Type of Event</label>
+          <select id="eventType" name="eventType" required>
+            <option value="" disabled selected>Select an event type...</option>
+            <option value="corporate">Corporate / Employee Gathering</option>
+            <option value="birthday">Birthday Celebration</option>
+            <option value="fundraiser">Fundraiser</option>
+            <option value="wedding_afterparty">Wedding After-Party</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="details">Additional Details & Requests</label>
+          <textarea id="details" name="details" placeholder="Tell us more about your vision for the event..."></textarea>
+        </div>
+
+        <button type="submit" class="primary-button gold-button submit-btn">Submit Request</button>
+      </form>
+      <p style="text-align:center; color: var(--text-muted); font-size: 0.8rem; margin-top: 1.5rem;">* This request is not for a VIP section. By filling out this form you are requesting a buyout of the whole club.</p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-brand">
+        <h3>CLUB BRAVA</h3>
+        <p>Fairmont El San Juan Hotel, Puerto Rico</p>
+      </div>
+      <div class="footer-legal">
+        <p>Email: info@clubbrava.com | Phone: 787 674 8000</p>
+        <p>&copy; 2026 Club Brava. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
