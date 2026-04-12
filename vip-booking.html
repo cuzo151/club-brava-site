@@ -46,7 +46,7 @@
         <span style="color:var(--color-gold); text-shadow: none;">Concierge</span>
       </h1>
       <p class="hero-tagline" data-anim="fade-up" data-delay="0.4" style="color:#fff;">Submit your request and our private AI Concierge will contact you immediately to customize your reality.</p>
-      
+
       <div class="scroll-indicator" data-anim="fade-up" data-delay="0.8" style="margin-top: 2rem; display: flex; flex-direction: column; align-items: center; opacity: 0.8;">
         <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 3px; color: var(--color-gold); margin-bottom: 0.5rem;">Scroll To Pop</span>
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: bounce 2s infinite;">
@@ -59,7 +59,7 @@
   <div class="page-content" style="padding-top: 0;">
     <div class="vip-form-wrapper" data-anim="fade-up">
       <form action="#" method="POST" id="voiceAgentForm">
-        
+
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-bottom: 2rem;">
           <div class="form-group">
             <label for="firstName">First Name</label>
@@ -70,7 +70,7 @@
             <input type="text" id="lastName" name="lastName" required placeholder="Doe">
           </div>
         </div>
-        
+
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-bottom: 2rem;">
           <div class="form-group">
             <label for="phone">Direct Phone Number</label>
@@ -123,19 +123,78 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
   <script src="script.js"></script>
   <script>
-    document.getElementById('voiceAgentForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const btn = this.querySelector('.vip-submit-btn');
-      btn.innerText = 'Connecting to concierge...';
-      btn.style.opacity = '0.7';
-      // Future integration hook for the voice agent trigger
-      setTimeout(() => {
-        alert("Thank you. Please answer your phone. Our voice agent concierge is calling you now.");
-        btn.innerText = 'Summon Concierge';
-        btn.style.opacity = '1';
-        this.reset();
-      }, 1500);
-    });
+    // Club Brava VIP Concierge — n8n + Retell outbound phone call
+    // Form submit → n8n webhook → Retell create-phone-call → Marco calls guest
+    (function () {
+      var WEBHOOK = "https://n8n.dreamerai.io/webhook/club-brava-vip";
+      var form = document.getElementById('voiceAgentForm');
+      var btn  = form.querySelector('.vip-submit-btn');
+      var note = form.querySelector('.concierge-note');
+
+      function humanDate(iso) {
+        if (!iso) return '';
+        try {
+          return new Date(iso + 'T00:00:00').toLocaleDateString('en-US', {
+            weekday: 'long', month: 'long', day: 'numeric'
+          });
+        } catch (e) { return iso; }
+      }
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        btn.disabled = true;
+        btn.innerText = 'Connecting to concierge...';
+        btn.style.opacity = '0.7';
+
+        var fd = new FormData(form);
+        var firstName = (fd.get('firstName') || '').toString().trim();
+        var lastName  = (fd.get('lastName')  || '').toString().trim();
+        var phone     = (fd.get('phone')     || '').toString().trim();
+        var rawDate   = (fd.get('date')      || '').toString();
+
+        var payload = {
+          guest_name:           [firstName, lastName].filter(Boolean).join(' '),
+          first_name:           firstName,
+          last_name:            lastName,
+          phone:                phone,
+          party_size:           (fd.get('partySize') || '').toString(),
+          reservation_date:     humanDate(rawDate),
+          reservation_date_iso: rawDate,
+          table_type:           'VIP Main Floor',
+          special_requests:     (fd.get('preferences') || '').toString(),
+          language_preference:  'auto',
+          source:               'vip-booking.html',
+          submitted_at:         new Date().toISOString()
+        };
+
+        fetch(WEBHOOK, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        })
+        .then(function (res) {
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          return res.json();
+        })
+        .then(function (data) {
+          // Hide form fields, show confirmation
+          var groups = form.querySelectorAll('.form-group, div[style*="grid"]');
+          for (var i = 0; i < groups.length; i++) groups[i].style.display = 'none';
+          note.innerHTML =
+            '<h3 style="color:var(--color-gold); font-family:Cinzel,serif; letter-spacing:2px; margin-bottom:1rem;">Concierge En Route</h3>' +
+            '<p>Thank you, ' + (firstName || 'VIP') + '. Marco, your private concierge, is calling ' +
+            '<strong style="color:var(--color-gold);">' + phone + '</strong> now to confirm your arrangements.</p>' +
+            '<p style="margin-top:1rem; opacity:0.75; font-size:0.9rem;">Please answer your phone. Brava is Brava.</p>';
+        })
+        .catch(function (err) {
+          console.error('Concierge error:', err);
+          btn.disabled = false;
+          btn.innerText = 'Summon Concierge';
+          btn.style.opacity = '1';
+          alert("We couldn't reach the concierge. Please try again or call us directly at 787 674 8000.");
+        });
+      });
+    })();
   </script>
 </body>
 </html>
