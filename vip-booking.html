@@ -140,6 +140,12 @@
         } catch (e) { return iso; }
       }
 
+      function normalizePhone(raw) {
+        var digits = raw.replace(/\D/g, '');
+        if (digits.length === 10) digits = '1' + digits;
+        return '+' + digits;
+      }
+
       form.addEventListener('submit', function (e) {
         e.preventDefault();
         btn.disabled = true;
@@ -149,7 +155,7 @@
         var fd = new FormData(form);
         var firstName = (fd.get('firstName') || '').toString().trim();
         var lastName  = (fd.get('lastName')  || '').toString().trim();
-        var phone     = (fd.get('phone')     || '').toString().trim();
+        var phone     = normalizePhone((fd.get('phone') || '').toString().trim());
         var rawDate   = (fd.get('date')      || '').toString();
 
         var payload = {
