@@ -45,7 +45,7 @@
         <span>VIP</span>
         <span style="color:var(--color-gold); text-shadow: none;">Concierge</span>
       </h1>
-      <p class="hero-tagline" data-anim="fade-up" data-delay="0.4" style="color:#fff;">Submit your request and our private AI Concierge will contact you immediately to customize your reality.</p>
+      <p class="hero-tagline" data-anim="fade-up" data-delay="0.4" style="color:#fff;">Submit your request and speak directly with our private AI Concierge to customize your reality.</p>
 
       <div class="scroll-indicator" data-anim="fade-up" data-delay="0.8" style="margin-top: 2rem; display: flex; flex-direction: column; align-items: center; opacity: 0.8;">
         <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 3px; color: var(--color-gold); margin-bottom: 0.5rem;">Scroll To Pop</span>
@@ -99,10 +99,18 @@
         </div>
 
         <div class="concierge-note">
-          <p>By submitting, you agree to receive an automated voice call from our VIP Concierge to confirm arrangements.</p>
+          <p>By submitting, you'll speak live with Marco, your AI VIP Concierge, right here in your browser.</p>
           <button type="submit" class="vip-submit-btn">Summon Concierge</button>
         </div>
       </form>
+
+      <!-- Voice call UI — hidden until call starts -->
+      <div id="call-ui" style="display:none; text-align:center; padding:3rem 2rem;">
+        <h3 id="call-heading" style="color:var(--color-gold); font-family:'Cinzel',serif; letter-spacing:2px; margin-bottom:1rem;">Connecting to Marco...</h3>
+        <p id="call-message" style="margin-bottom:1.5rem;">Your private VIP concierge is joining the call.</p>
+        <div id="call-pulse" style="width:80px; height:80px; border-radius:50%; background:var(--color-gold); margin:0 auto 1.5rem; opacity:0.6; animation: pulse 1.5s ease-in-out infinite;"></div>
+        <button id="end-call-btn" class="vip-submit-btn" style="display:none; background:transparent; border:1px solid var(--color-gold); cursor:pointer;">End Call</button>
+      </div>
     </div>
   </div>
 
@@ -122,85 +130,115 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
   <script src="script.js"></script>
-  <script>
-    // Club Brava VIP Concierge — n8n + Retell outbound phone call
-    // Form submit → n8n webhook → Retell create-phone-call → Marco calls guest
-    (function () {
-      var WEBHOOK = "https://n8n.dreamerai.io/webhook/club-brava-vip";
-      var form = document.getElementById('voiceAgentForm');
-      var btn  = form.querySelector('.vip-submit-btn');
-      var note = form.querySelector('.concierge-note');
+  <script type="module">
+    import { RetellWebClient } from "https://cdn.jsdelivr.net/npm/retell-client-js-sdk@2/+esm";
 
-      function humanDate(iso) {
-        if (!iso) return '';
-        try {
-          return new Date(iso + 'T00:00:00').toLocaleDateString('en-US', {
-            weekday: 'long', month: 'long', day: 'numeric'
-          });
-        } catch (e) { return iso; }
-      }
+    var WEBHOOK = "https://n8n.dreamerai.io/webhook/club-brava-vip";
+    var form    = document.getElementById('voiceAgentForm');
+    var btn     = form.querySelector('.vip-submit-btn');
+    var callUI  = document.getElementById('call-ui');
+    var callHead = document.getElementById('call-heading');
+    var callMsg  = document.getElementById('call-message');
+    var endBtn   = document.getElementById('end-call-btn');
+    var callPulse = document.getElementById('call-pulse');
+    var guestFirstName = '';
 
-      function normalizePhone(raw) {
-        var digits = raw.replace(/\D/g, '');
-        if (digits.length === 10) digits = '1' + digits;
-        return '+' + digits;
-      }
+    var retell = new RetellWebClient();
 
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        btn.disabled = true;
-        btn.innerText = 'Connecting to concierge...';
-        btn.style.opacity = '0.7';
+    function humanDate(iso) {
+      if (!iso) return '';
+      try { return new Date(iso + 'T00:00:00').toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' }); }
+      catch(e) { return iso; }
+    }
 
-        var fd = new FormData(form);
-        var firstName = (fd.get('firstName') || '').toString().trim();
-        var lastName  = (fd.get('lastName')  || '').toString().trim();
-        var phone     = normalizePhone((fd.get('phone') || '').toString().trim());
-        var rawDate   = (fd.get('date')      || '').toString();
+    function normalizePhone(raw) {
+      var digits = raw.replace(/\D/g, '');
+      if (digits.length === 10) digits = '1' + digits;
+      return '+' + digits;
+    }
 
-        var payload = {
-          guest_name:           [firstName, lastName].filter(Boolean).join(' '),
-          first_name:           firstName,
-          last_name:            lastName,
-          phone:                phone,
-          party_size:           (fd.get('partySize') || '').toString(),
-          reservation_date:     humanDate(rawDate),
-          reservation_date_iso: rawDate,
-          table_type:           'VIP Main Floor',
-          special_requests:     (fd.get('preferences') || '').toString(),
-          language_preference:  'auto',
-          source:               'vip-booking.html',
-          submitted_at:         new Date().toISOString()
-        };
+    retell.on("call_started", function() {
+      callHead.textContent = 'Speaking with Marco';
+      callMsg.textContent = guestFirstName + ', Marco is confirming your VIP arrangements.';
+      endBtn.style.display = 'inline-block';
+    });
 
-        fetch(WEBHOOK, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        })
-        .then(function (res) {
-          if (!res.ok) throw new Error('HTTP ' + res.status);
-          return res.json();
-        })
-        .then(function (data) {
-          // Hide form fields, show confirmation
-          var groups = form.querySelectorAll('.form-group, div[style*="grid"]');
-          for (var i = 0; i < groups.length; i++) groups[i].style.display = 'none';
-          note.innerHTML =
-            '<h3 style="color:var(--color-gold); font-family:Cinzel,serif; letter-spacing:2px; margin-bottom:1rem;">Concierge En Route</h3>' +
-            '<p>Thank you, ' + (firstName || 'VIP') + '. Marco, your private concierge, is calling ' +
-            '<strong style="color:var(--color-gold);">' + phone + '</strong> now to confirm your arrangements.</p>' +
-            '<p style="margin-top:1rem; opacity:0.75; font-size:0.9rem;">Please answer your phone. Brava is Brava.</p>';
-        })
-        .catch(function (err) {
-          console.error('Concierge error:', err);
-          btn.disabled = false;
-          btn.innerText = 'Summon Concierge';
-          btn.style.opacity = '1';
-          alert("We couldn't reach the concierge. Please try again or call us directly at 787 674 8000.");
-        });
+    retell.on("call_ended", function() {
+      callHead.textContent = 'Reservation Confirmed';
+      callMsg.innerHTML = 'Thank you, ' + (guestFirstName || 'VIP') + '. Your VIP experience is locked in.<br><span style="opacity:0.7;font-size:0.9rem;margin-top:0.5rem;display:inline-block;">Brava is Brava.</span>';
+      endBtn.style.display = 'none';
+      callPulse.style.display = 'none';
+    });
+
+    retell.on("error", function(e) {
+      console.error('Retell error:', e);
+      callHead.textContent = 'Connection Issue';
+      callMsg.textContent = 'Please call us directly at 787 674 8000 to complete your reservation.';
+      callPulse.style.display = 'none';
+      endBtn.style.display = 'none';
+    });
+
+    endBtn.addEventListener('click', function() { retell.stopCall(); });
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      btn.disabled = true;
+      btn.innerText = 'Connecting to concierge...';
+      btn.style.opacity = '0.7';
+
+      var fd = new FormData(form);
+      guestFirstName = (fd.get('firstName') || '').toString().trim();
+      var lastName  = (fd.get('lastName')  || '').toString().trim();
+      var phone     = normalizePhone((fd.get('phone') || '').toString().trim());
+      var rawDate   = (fd.get('date')      || '').toString();
+
+      var payload = {
+        guest_name:           [guestFirstName, lastName].filter(Boolean).join(' '),
+        first_name:           guestFirstName,
+        last_name:            lastName,
+        phone:                phone,
+        party_size:           (fd.get('partySize') || '').toString(),
+        reservation_date:     humanDate(rawDate),
+        reservation_date_iso: rawDate,
+        table_type:           'VIP Main Floor',
+        special_requests:     (fd.get('preferences') || '').toString(),
+        language_preference:  'auto',
+        source:               'vip-booking.html',
+        submitted_at:         new Date().toISOString()
+      };
+
+      fetch(WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (!data.access_token) {
+          throw new Error(data.error || 'No access token received');
+        }
+        // Hide form, show call UI
+        form.style.display = 'none';
+        callUI.style.display = 'block';
+        callHead.textContent = 'Connecting to Marco...';
+        callMsg.textContent = guestFirstName + ', your private concierge is joining the call.';
+
+        return retell.startCall({ accessToken: data.access_token });
+      })
+      .catch(function(err) {
+        console.error('Concierge error:', err);
+        btn.disabled = false;
+        btn.innerText = 'Summon Concierge';
+        btn.style.opacity = '1';
+        alert("We couldn't reach the concierge. Please try again or call us directly at 787 674 8000.");
       });
-    })();
+    });
   </script>
+  <style>
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.15); opacity: 1; }
+    }
+  </style>
 </body>
 </html>
