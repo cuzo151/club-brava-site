@@ -45,8 +45,7 @@
         <span>VIP</span>
         <span style="color:var(--color-gold); text-shadow: none;">Concierge</span>
       </h1>
-      <p class="hero-tagline" data-anim="fade-up" data-delay="0.4" style="color:#fff;">Submit your request and speak directly with our private AI Concierge to customize your reality.</p>
-
+      <p class="hero-tagline" data-anim="fade-up" data-delay="0.4" style="color:#fff;">Submit your request and our private AI Concierge will call you immediately to customize your reality.</p>
       <div class="scroll-indicator" data-anim="fade-up" data-delay="0.8" style="margin-top: 2rem; display: flex; flex-direction: column; align-items: center; opacity: 0.8;">
         <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 3px; color: var(--color-gold); margin-bottom: 0.5rem;">Scroll To Pop</span>
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: bounce 2s infinite;">
@@ -59,7 +58,6 @@
   <div class="page-content" style="padding-top: 0;">
     <div class="vip-form-wrapper" data-anim="fade-up">
       <form action="#" method="POST" id="voiceAgentForm">
-
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-bottom: 2rem;">
           <div class="form-group">
             <label for="firstName">First Name</label>
@@ -70,7 +68,6 @@
             <input type="text" id="lastName" name="lastName" required placeholder="Doe">
           </div>
         </div>
-
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-bottom: 2rem;">
           <div class="form-group">
             <label for="phone">Direct Phone Number</label>
@@ -87,27 +84,37 @@
             </select>
           </div>
         </div>
-
         <div class="form-group" style="margin-bottom: 2rem;">
           <label for="date">Date of Reservation</label>
           <input type="date" id="date" name="date" required style="cursor: pointer;">
         </div>
-
         <div class="form-group" style="margin-bottom: 2rem;">
           <label for="preferences">Special Requests or Liquor Preferences</label>
           <input type="text" id="preferences" name="preferences" placeholder="E.g., 2 bottles of Don Julio 1942, sparklers, front table..." style="padding-bottom: 2rem;">
         </div>
-
         <div class="concierge-note">
-          <p>By submitting, you'll speak live with Marco, your AI VIP Concierge, right here in your browser.</p>
+          <p>By submitting, you agree to receive an automated voice call from our VIP Concierge to confirm arrangements.</p>
           <button type="submit" class="vip-submit-btn">Summon Concierge</button>
         </div>
       </form>
 
-      <!-- Voice call UI — hidden until call starts -->
+      <!-- Confirmation screen after form submit -->
+      <div id="confirm-ui" style="display:none; text-align:center; padding:3rem 2rem;">
+        <h3 style="color:var(--color-gold); font-family:'Cinzel',serif; letter-spacing:2px; margin-bottom:1rem;">Concierge En Route</h3>
+        <p id="confirm-msg" style="margin-bottom:0.5rem;"></p>
+        <p style="margin-bottom:1.5rem; font-size:1.1rem;">Answer the call from <strong style="color:var(--color-gold); font-size:1.2rem;">(877) 313-8290</strong></p>
+        <div style="width:80px; height:80px; border-radius:50%; background:var(--color-gold); margin:0 auto 2rem; opacity:0.6; animation: pulse 1.5s ease-in-out infinite;"></div>
+        <p style="opacity:0.6; font-size:0.85rem; margin-bottom:1.5rem;">Marco is dialing your phone now. Please keep it nearby.</p>
+        <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:1.5rem; margin-top:1rem;">
+          <p style="opacity:0.5; font-size:0.8rem; margin-bottom:0.75rem;">Can't take a phone call right now?</p>
+          <button id="web-call-btn" class="vip-submit-btn" style="font-size:0.85rem; padding:0.8rem 2rem; background:transparent; border:1px solid var(--color-gold); cursor:pointer;">Talk to Marco in Your Browser Instead</button>
+        </div>
+      </div>
+
+      <!-- Web call UI (fallback) -->
       <div id="call-ui" style="display:none; text-align:center; padding:3rem 2rem;">
         <h3 id="call-heading" style="color:var(--color-gold); font-family:'Cinzel',serif; letter-spacing:2px; margin-bottom:1rem;">Connecting to Marco...</h3>
-        <p id="call-message" style="margin-bottom:1.5rem;">Your private VIP concierge is joining the call.</p>
+        <p id="call-message" style="margin-bottom:1.5rem;"></p>
         <div id="call-pulse" style="width:80px; height:80px; border-radius:50%; background:var(--color-gold); margin:0 auto 1.5rem; opacity:0.6; animation: pulse 1.5s ease-in-out infinite;"></div>
         <button id="end-call-btn" class="vip-submit-btn" style="display:none; background:transparent; border:1px solid var(--color-gold); cursor:pointer;">End Call</button>
       </div>
@@ -134,16 +141,20 @@
     import { RetellWebClient } from "https://cdn.jsdelivr.net/npm/retell-client-js-sdk@2/+esm";
 
     var WEBHOOK = "https://n8n.dreamerai.io/webhook/club-brava-vip";
-    var form    = document.getElementById('voiceAgentForm');
-    var btn     = form.querySelector('.vip-submit-btn');
-    var callUI  = document.getElementById('call-ui');
-    var callHead = document.getElementById('call-heading');
-    var callMsg  = document.getElementById('call-message');
-    var endBtn   = document.getElementById('end-call-btn');
+    var form      = document.getElementById('voiceAgentForm');
+    var btn       = form.querySelector('.vip-submit-btn');
+    var confirmUI = document.getElementById('confirm-ui');
+    var confirmMsg = document.getElementById('confirm-msg');
+    var webCallBtn = document.getElementById('web-call-btn');
+    var callUI    = document.getElementById('call-ui');
+    var callHead  = document.getElementById('call-heading');
+    var callMsg   = document.getElementById('call-message');
+    var endBtn    = document.getElementById('end-call-btn');
     var callPulse = document.getElementById('call-pulse');
-    var guestFirstName = '';
 
     var retell = new RetellWebClient();
+    var guestFirstName = '';
+    var savedPayload = null;
 
     function humanDate(iso) {
       if (!iso) return '';
@@ -157,29 +168,56 @@
       return '+' + digits;
     }
 
+    // Retell Web SDK events (for fallback web call)
     retell.on("call_started", function() {
       callHead.textContent = 'Speaking with Marco';
       callMsg.textContent = guestFirstName + ', Marco is confirming your VIP arrangements.';
       endBtn.style.display = 'inline-block';
     });
-
     retell.on("call_ended", function() {
       callHead.textContent = 'Reservation Confirmed';
       callMsg.innerHTML = 'Thank you, ' + (guestFirstName || 'VIP') + '. Your VIP experience is locked in.<br><span style="opacity:0.7;font-size:0.9rem;margin-top:0.5rem;display:inline-block;">Brava is Brava.</span>';
       endBtn.style.display = 'none';
       callPulse.style.display = 'none';
     });
-
     retell.on("error", function(e) {
       console.error('Retell error:', e);
       callHead.textContent = 'Connection Issue';
-      callMsg.textContent = 'Please call us directly at 787 674 8000 to complete your reservation.';
+      callMsg.textContent = 'Please call us directly at 787 674 8000.';
       callPulse.style.display = 'none';
-      endBtn.style.display = 'none';
     });
-
     endBtn.addEventListener('click', function() { retell.stopCall(); });
 
+    // "Talk in browser" fallback button
+    webCallBtn.addEventListener('click', function() {
+      webCallBtn.disabled = true;
+      webCallBtn.textContent = 'Connecting...';
+
+      var webPayload = Object.assign({}, savedPayload, { mode: 'web' });
+
+      fetch(WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(webPayload)
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (!data.access_token) throw new Error(data.error || 'No token');
+        confirmUI.style.display = 'none';
+        callUI.style.display = 'block';
+        callHead.textContent = 'Connecting to Marco...';
+        callMsg.textContent = guestFirstName + ', your private concierge is joining.';
+        return retell.startCall({ accessToken: data.access_token });
+      })
+      .catch(function(err) {
+        console.error('Web call error:', err);
+        webCallBtn.disabled = false;
+        webCallBtn.textContent = 'Talk to Marco in Your Browser Instead';
+        alert('Could not connect. Please call 787 674 8000.');
+      });
+    });
+
+    // Main form submit — triggers phone call
     form.addEventListener('submit', function(e) {
       e.preventDefault();
       btn.disabled = true;
@@ -192,7 +230,7 @@
       var phone     = normalizePhone((fd.get('phone') || '').toString().trim());
       var rawDate   = (fd.get('date')      || '').toString();
 
-      var payload = {
+      savedPayload = {
         guest_name:           [guestFirstName, lastName].filter(Boolean).join(' '),
         first_name:           guestFirstName,
         last_name:            lastName,
@@ -203,6 +241,7 @@
         table_type:           'VIP Main Floor',
         special_requests:     (fd.get('preferences') || '').toString(),
         language_preference:  'auto',
+        mode:                 'phone',
         source:               'vip-booking.html',
         submitted_at:         new Date().toISOString()
       };
@@ -210,20 +249,14 @@
       fetch(WEBHOOK, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(savedPayload)
       })
       .then(function(res) { return res.json(); })
       .then(function(data) {
-        if (!data.access_token) {
-          throw new Error(data.error || 'No access token received');
-        }
-        // Hide form, show call UI
+        if (data.error) throw new Error(data.error);
         form.style.display = 'none';
-        callUI.style.display = 'block';
-        callHead.textContent = 'Connecting to Marco...';
-        callMsg.textContent = guestFirstName + ', your private concierge is joining the call.';
-
-        return retell.startCall({ accessToken: data.access_token });
+        confirmUI.style.display = 'block';
+        confirmMsg.textContent = 'Thank you, ' + (guestFirstName || 'VIP') + '. Marco, your private concierge, is calling you now.';
       })
       .catch(function(err) {
         console.error('Concierge error:', err);
