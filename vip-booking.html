@@ -68,6 +68,10 @@
             <input type="text" id="lastName" name="lastName" required placeholder="Doe">
           </div>
         </div>
+        <div class="form-group" style="margin-bottom: 2rem;">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" required placeholder="john@example.com">
+        </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-bottom: 2rem;">
           <div class="form-group">
             <label for="phone">Direct Phone Number</label>
@@ -227,6 +231,7 @@
       var fd = new FormData(form);
       guestFirstName = (fd.get('firstName') || '').toString().trim();
       var lastName  = (fd.get('lastName')  || '').toString().trim();
+      var email     = (fd.get('email')     || '').toString().trim();
       var phone     = normalizePhone((fd.get('phone') || '').toString().trim());
       var rawDate   = (fd.get('date')      || '').toString();
 
@@ -234,6 +239,7 @@
         guest_name:           [guestFirstName, lastName].filter(Boolean).join(' '),
         first_name:           guestFirstName,
         last_name:            lastName,
+        email:                email,
         phone:                phone,
         party_size:           (fd.get('partySize') || '').toString(),
         reservation_date:     humanDate(rawDate),
